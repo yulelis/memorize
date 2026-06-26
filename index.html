@@ -7,6 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#142620">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="계시록 암송">
 <style>
 :root{
   --paper:#EDE7DB; --card:#F8F4EB; --card2:#F1ECDF;
@@ -597,6 +604,10 @@ document.getElementById('stage').addEventListener('keydown',e=>{if(e.key==='Ente
 
 /* init */
 load(); initTTS(); renderHome();
+</script>
+<script>
+/* PWA: 서비스워커 등록 (https 호스팅에서 동작 — 설치/오프라인 지원) */
+if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>
 </body>
 </html>
