@@ -1,5 +1,5 @@
 /* 계시록 암송 게임 - service worker */
-const CACHE = 'rev-game-v1';
+const CACHE = 'rev-game-v8';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

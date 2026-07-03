@@ -7,13 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#142620">
-<link rel="apple-touch-icon" href="icon-180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="계시록 암송">
 <style>
 :root{
   --paper:#EDE7DB; --card:#F8F4EB; --card2:#F1ECDF;
@@ -33,9 +26,8 @@ body{font-family:var(--sans); background:var(--paper); color:var(--ink); line-he
 button{font-family:var(--sans); cursor:pointer; border:none; background:none; color:inherit;}
 .wrap{max-width:620px; margin:0 auto; padding:0 0 70px;}
 .hidden{display:none !important;}
-.no-tts .listen{display:none !important;}
-
-.hd{background:var(--pine-deep); color:var(--gold-soft); padding:20px 20px 18px; position:relative; overflow:hidden;}
+.listen{display:inline-flex; align-items:center; justify-content:center; width:24px;height:24px; border-radius:7px; background:var(--gold-wash); color:var(--gold); font-size:13px; vertical-align:.1em; margin-right:4px; border:1px solid #e6d4a2;}
+.listen:active{transform:scale(.9);}background:var(--pine-deep); color:var(--gold-soft); padding:20px 20px 18px; position:relative; overflow:hidden;}
 .hd::after{content:""; position:absolute; left:0;right:0;bottom:0;height:2px;
   background:linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold-bright) 50%, var(--gold) 70%, transparent);}
 .hd .eyebrow{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:rgba(232,215,166,.7); margin:0 0 5px; font-weight:500;}
@@ -133,13 +125,11 @@ button{font-family:var(--sans); cursor:pointer; border:none; background:none; co
 .verse{font-family:var(--serif); font-size:19px; line-height:1.95; margin:0 0 14px; position:relative;}
 .verse:last-child{margin-bottom:0;}
 .vnum{font-family:var(--sans); font-size:11px; font-weight:700; color:var(--gold); vertical-align:.5em; margin-right:5px; background:var(--gold-wash); padding:1px 5px; border-radius:5px;}
-.listen{display:inline-flex; align-items:center; justify-content:center; width:24px;height:24px; border-radius:7px; background:var(--gold-wash); color:var(--gold); font-size:13px; vertical-align:.1em; margin-right:4px; border:1px solid #e6d4a2;}
-.listen:active{transform:scale(.9);}
 .w{display:inline; border-radius:4px;}
 .w.rev{background:var(--gold-wash); box-shadow:0 0 0 2px var(--gold-wash); animation:pop .25s;}
 @keyframes pop{from{background:var(--gold-soft);} to{background:var(--gold-wash);}}
-.w.ghost{cursor:pointer;}
-.w.ghost .lead{color:var(--ink);} .w.ghost .rest{color:transparent; border-bottom:1.5px dotted var(--line2);}
+.w.ghost{cursor:pointer; background:var(--card2); border:1.5px dashed var(--line2); border-radius:7px; padding:0 6px;}
+.w.ghost .lead{color:var(--ink); font-weight:600;} .w.ghost .rest{color:transparent;}
 
 .game-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12.5px; color:var(--faint); font-weight:600;}
 .game-head .pts{color:var(--gold); font-weight:700;}
@@ -200,6 +190,12 @@ ul.clean{list-style:none; margin:0; padding:0;}
       <div class="stat"><div class="v" id="stSeals">0</div><div class="l">장 도장</div></div>
     </div>
 
+    <section class="card hidden" id="reviewCard" style="border-color:var(--gold);">
+      <h2><span class="s">🔁</span> 오늘의 복습</h2>
+      <p style="margin:0 0 12px; font-size:13.5px; color:var(--ink-soft);"><b id="revCount" style="color:var(--ink);"></b> — 잊기 전에 다시 암송하면 기억이 훨씬 오래가요.</p>
+      <button class="btn btn-gold" id="reviewBtn">복습 시작 →</button>
+    </section>
+
     <section class="card">
       <h2><span class="s">✦</span> 경험치</h2>
       <div class="lvbar"><i id="xpFill" style="width:0%"></i></div>
@@ -255,6 +251,19 @@ ul.clean{list-style:none; margin:0; padding:0;}
     <p class="foot">완료(금색)한 절을 다시 눌러 복습할 수도 있어요.</p>
   </main>
 
+  <main id="review" class="screen hidden">
+    <div class="ph">
+      <button class="back" id="revBack" aria-label="홈으로">←</button>
+      <div class="t"><div class="ref" id="revRef">복습</div><div class="q" id="revQty"></div></div>
+    </div>
+    <p class="stage-tip">먼저 외워서 소리 내어 말해보고, 막힌 단어만 눌러 확인한 뒤 아래에서 스스로 평가하세요.</p>
+    <div id="revStage"></div>
+    <div class="btn-row" style="margin-top:4px;">
+      <button class="btn btn-ghost" id="revFail">△ 가물가물</button>
+      <button class="btn btn-gold" id="revPass">✓ 잘 외웠어요</button>
+    </div>
+  </main>
+
   <main id="session" class="screen hidden">
     <div class="ph">
       <button class="back" id="sessBack" aria-label="뒤로">←</button>
@@ -291,6 +300,7 @@ function _set(k,v){ try{localStorage.setItem(k,v);}catch(e){_mem[k]=v;} }
 function load(){
   const v=_get(KEY); if(v){ try{state=Object.assign(state,JSON.parse(v));}catch(e){} }
   if(!state.ch) state.ch={};
+  if(!Array.isArray(state.reviews)) state.reviews=[];
   // 아주 옛 방식(누적 절수) → 장별
   if(state.done!==undefined){
     if(Object.keys(state.ch).length===0){ let d=state.done; for(let c=1;c<=22&&d>0;c++){ const t=REV[c-1]; const take=Math.min(d,t); const arr=[]; for(let x=1;x<=take;x++)arr.push(x); state.ch[c]=arr; d-=take; } }
@@ -324,6 +334,13 @@ function tStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth(
 function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');}
 function streak(){if(!state.completedDates.length)return 0;const set=new Set(state.completedDates);let s=0;const d=new Date();const f=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');if(!set.has(f(d)))d.setDate(d.getDate()-1);while(set.has(f(d))){s++;d.setDate(d.getDate()-1);}return s;}
 
+/* ===== 간격 반복 복습 ===== */
+const R_INT=[1,3,7,16,35]; // 복습 간격(일): 통과할 때마다 다음 단계로
+function isoPlus(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dueReviews(){const t=tStr();return (state.reviews||[]).filter(r=>r.due<=t).sort((a,b)=>a.due<b.due?-1:(a.ch-b.ch)||(a.a-b.a));}
+function scheduleReview(ch,a,b){const ex=state.reviews.find(r=>r.ch===ch&&r.a===a&&r.b===b); if(ex){ex.lv=0;ex.due=isoPlus(R_INT[0]);} else state.reviews.push({ch,a,b,lv:0,due:isoPlus(R_INT[0])});}
+function getVersesRange(ch,a,b){const m=BIBLE[ch]||{};const out=[];for(let v=a;v<=b;v++){if(m[v])out.push({n:v,words:String(m[v]).split(/\s+/).filter(Boolean)});}return out;}
+
 /* ===== 유틸 ===== */
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function hideable(w){return /[가-힣A-Za-z0-9]/.test(w);}
@@ -337,30 +354,38 @@ function getDayVerses(){
 
 /* ===== TTS ===== */
 let koVoice=null, activeSpeak=null;
+function isCap(){ return !!(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.TextToSpeech); }
 function initTTS(){
-  if(!('speechSynthesis'in window)){document.body.classList.add('no-tts');return;}
-  const pick=()=>{const vs=speechSynthesis.getVoices();koVoice=vs.find(v=>/ko/i.test(v.lang))||null;document.body.classList.toggle('no-tts',!koVoice);};
-  pick(); speechSynthesis.onvoiceschanged=pick;
+  if(!isCap()&&!('speechSynthesis'in window)) return;
+  if(!isCap()){ const pick=()=>{const vs=speechSynthesis.getVoices();koVoice=vs.find(v=>/ko/i.test(v.lang))||null;}; pick(); speechSynthesis.onvoiceschanged=pick; }
 }
 function updateSpeakUI(){
-  document.querySelectorAll('#stage [data-say]').forEach(b=>{ b.textContent=(activeSpeak==='say-'+b.dataset.say)?'⏹':'▶'; });
+  document.querySelectorAll('#stage [data-say]').forEach(b=>{b.textContent=(activeSpeak==='say-'+b.dataset.say)?'⏹':'▶';});
+  document.querySelectorAll('#revStage [data-say]').forEach(b=>{b.textContent=(activeSpeak==='rvsay-'+b.dataset.say)?'⏹':'▶';});
   const sa=document.getElementById('sayAll'); if(sa) sa.textContent=(activeSpeak==='all')?'⏹ 멈춤':'🔊 전체 듣기';
 }
-function stopSpeak(){ try{if('speechSynthesis'in window)speechSynthesis.cancel();}catch(e){} activeSpeak=null; updateSpeakUI(); }
-function speak(t, id){
-  if(!('speechSynthesis'in window))return;
-  if(activeSpeak===id){ stopSpeak(); return; }            /* 같은 버튼 다시 누르면 멈춤 */
-  try{speechSynthesis.cancel();}catch(e){}
-  const u=new SpeechSynthesisUtterance(t);
-  if(koVoice)u.voice=koVoice; u.lang='ko-KR'; u.rate=0.92;
-  u.onend=()=>{ if(activeSpeak===id){activeSpeak=null;updateSpeakUI();} };
-  u.onerror=()=>{ if(activeSpeak===id){activeSpeak=null;updateSpeakUI();} };
-  activeSpeak=id; updateSpeakUI();
-  try{speechSynthesis.speak(u);}catch(e){activeSpeak=null;updateSpeakUI();}
+function stopSpeak(){
+  try{ if(isCap()) window.Capacitor.Plugins.TextToSpeech.stop(); else if('speechSynthesis'in window) speechSynthesis.cancel(); }catch(e){}
+  activeSpeak=null; updateSpeakUI();
+}
+function speak(t,id){
+  if(activeSpeak===id){ stopSpeak(); return; }
+  stopSpeak(); activeSpeak=id; updateSpeakUI();
+  if(isCap()){
+    window.Capacitor.Plugins.TextToSpeech.speak({text:t,lang:'ko-KR',rate:0.9,pitch:1.0,volume:1.0})
+      .then(()=>{if(activeSpeak===id){activeSpeak=null;updateSpeakUI();}})
+      .catch(()=>{if(activeSpeak===id){activeSpeak=null;updateSpeakUI();}});
+  }else{
+    try{ const u=new SpeechSynthesisUtterance(t); if(koVoice)u.voice=koVoice; u.lang='ko-KR'; u.rate=0.92;
+      u.onend=()=>{if(activeSpeak===id){activeSpeak=null;updateSpeakUI();}};
+      u.onerror=()=>{if(activeSpeak===id){activeSpeak=null;updateSpeakUI();}};
+      speechSynthesis.speak(u);
+    }catch(e){activeSpeak=null;updateSpeakUI();}
+  }
 }
 
 /* ===== 화면 ===== */
-const SC={home:'home',select:'select',chapter:'chapter',session:'session'};
+const SC={home:'home',select:'select',chapter:'chapter',session:'session',review:'review'};
 function show(n){stopSpeak();for(const k in SC)document.getElementById(SC[k]).classList.toggle('hidden',k!==n);window.scrollTo(0,0);}
 
 /* ===== HOME ===== */
@@ -369,6 +394,9 @@ function renderHome(){
   document.getElementById('stLvl').textContent=lvOf(state.xp);
   document.getElementById('stStreak').textContent=streak();
   document.getElementById('stSeals').textContent=sealsDone();
+  const dr=dueReviews();
+  document.getElementById('reviewCard').classList.toggle('hidden', dr.length===0);
+  if(dr.length) document.getElementById('revCount').textContent=dr.length+'개 분량이 기다리고 있어요';
   const inLv=state.xp%XP_PER_LV;
   document.getElementById('xpFill').style.width=inLv+'%';
   document.getElementById('xpNow').textContent=state.xp+' XP';
@@ -434,12 +462,12 @@ function startRange(c, sv){ cur=chunkFrom(c, sv); dayVerses=getDayVerses(); if(!
 const TIP={listen:'음성으로 듣고, 소리 내어 따라 읽어보세요.',
   order:'섞인 단어를 순서대로 탭하세요. 맞으면 위로 올라가요!',
   quiz:'빈칸에 들어갈 단어를 보기에서 고르세요.',
-  recite:'전부 가린 상태로 외워 말한 뒤, 단어를 눌러 확인하세요.'};
+  recite:'난이도를 고른 뒤 빈칸을 외워 말하고, 눌러서 확인하세요. 빈칸은 매번 새로 섞여요.'};
 let stepDone={listen:false,order:false,quiz:false,recite:false};
 let orderRounds=[], oRound=0, oIdx=0, oPool=[];
 let quizQs=[], qIdx=0, qLocked=false;
-let recRev=new Set();
-function resetGameState(){orderRounds=[];oRound=0;oIdx=0;oPool=[];quizQs=[];qIdx=0;qLocked=false;recRev=new Set();}
+let recRev=new Set(), recLevel=0, recBlanks=new Set();
+function resetGameState(){orderRounds=[];oRound=0;oIdx=0;oPool=[];quizQs=[];qIdx=0;qLocked=false;recRev=new Set();recLevel=0;recBlanks=new Set();}
 
 function openSession(){
   resetGameState();
@@ -451,6 +479,7 @@ function openSession(){
 function setStep(s){
   stopSpeak();
   step=s;
+  if(s==='recite'){recBlanks=new Set();recRev=new Set();}
   document.querySelectorAll('#stepNav button').forEach(b=>{b.classList.toggle('on',b.dataset.s===s);b.classList.toggle('done',stepDone[b.dataset.s]);});
   document.getElementById('stageTip').textContent=TIP[s];
   const st=document.getElementById('stage');
@@ -532,17 +561,23 @@ function quizTap(opt, el){
 }
 
 /* --- RECITE --- */
+const REC_RATIO=[0.25,0.5,0.75,1];
+function computeBlanks(){const r=REC_RATIO[recLevel];recBlanks=new Set();const all=[];dayVerses.forEach((v,vi)=>v.words.forEach((w,wi)=>{if(hideable(w))all.push(vi+'-'+wi);}));if(r>=1){all.forEach(k=>recBlanks.add(k));}else{all.forEach(k=>{if(Math.random()<r)recBlanks.add(k);});if(recBlanks.size===0&&all.length)recBlanks.add(all[Math.floor(Math.random()*all.length)]);}}
 function renderRecite(box){
-  box.innerHTML='<div class="script">'+dayVerses.map((v,vi)=>{
+  if(recBlanks.size===0)computeBlanks();
+  const segBtn=(rl,t,pn)=>'<button data-rl="'+rl+'"'+(recLevel===rl?' class="on"':'')+'>'+t+'<span class="pn">'+pn+'</span></button>';
+  box.innerHTML='<div class="seg" id="recSeg" style="margin-bottom:12px;">'+segBtn(0,'쉬움','빈칸 25%')+segBtn(1,'보통','빈칸 50%')+segBtn(2,'어려움','빈칸 75%')+segBtn(3,'최고','전부 가림')+'</div>'
+  +'<div class="script">'+dayVerses.map((v,vi)=>{
     const words=v.words.map((w,wi)=>{
       const k=vi+'-'+wi;
-      if(recRev.has(k)||!hideable(w))return '<span class="w rev">'+esc(w)+'</span>';
-      const a=[...w],lead=a[0]||'',rest=a.slice(1).join('');
-      return '<span class="w ghost" role="button" tabindex="0" data-rk="'+k+'"><span class="lead">'+esc(lead)+'</span><span class="rest">'+esc(rest)+'</span></span>';
+      if(!hideable(w)||!recBlanks.has(k))return '<span class="w">'+esc(w)+'</span>';
+      if(recRev.has(k))return '<span class="w rev">'+esc(w)+'</span>';
+      if(recLevel===3)return '<span class="w ghost" role="button" tabindex="0" data-rk="'+k+'"><span class="rest">〇〇</span></span>';
+      return '<span class="w ghost" role="button" tabindex="0" data-rk="'+k+'"><span class="rest">'+esc(w)+'</span></span>';
     }).join(' ');
     return '<p class="verse"><button class="listen" data-say="'+vi+'" aria-label="듣기">▶</button><span class="vnum">'+v.n+'</span>'+words+'</p>';
-  }).join('')+'</div>'+
-  '<div class="btn-row"><button class="btn btn-ghost sm" id="recHide">다시 가리기</button><button class="btn btn-pine sm" id="recAll">전체 보기로 확인</button></div>';
+  }).join('')+'</div>'
+  +'<div class="btn-row"><button class="btn btn-ghost sm" id="recHide">🔀 새로 가리기</button><button class="btn btn-pine sm" id="recAll">전체 보기로 확인</button></div>';
   updateSpeakUI();
 }
 
@@ -550,6 +585,7 @@ function renderRecite(box){
 function completeToday(){
   const c=cur.ch, was=chComplete(c);
   markDoneVerses(c, cur.vStart, cur.vEnd);
+  scheduleReview(c, cur.vStart, cur.vEnd);
   addXP(20);
   const d=tStr(); if(!state.completedDates.includes(d))state.completedDates.push(d);
   save();
@@ -571,7 +607,56 @@ function celebrate(){
   for(let i=0;i<18;i++){const s=document.createElement('div');s.className='spark';s.textContent=m[i%m.length];s.style.left=(Math.random()*100)+'vw';s.style.color=Math.random()>.5?'#D3A64B':'#B5853A';s.style.fontSize=(10+Math.random()*13)+'px';const dur=1.6+Math.random()*1.4;s.style.animation='fall '+dur+'s ease-in '+(Math.random()*.4)+'s forwards';document.body.appendChild(s);setTimeout(()=>s.remove(),(dur+.6)*1000);}
 }
 
+/* ===== 복습 세션 ===== */
+let revQueue=[], revIdx=0, rvVerses=[], rvRev=new Set();
+function startReview(){
+  revQueue=dueReviews(); if(!revQueue.length)return;
+  revIdx=0; openReviewItem(); show('review');
+}
+function openReviewItem(){
+  const it=revQueue[revIdx];
+  document.getElementById('revRef').textContent='복습 · 계 '+it.ch+':'+it.a+(it.b>it.a?'–'+it.b:'');
+  document.getElementById('revQty').textContent=(revIdx+1)+' / '+revQueue.length+' · '+(it.lv+1)+'단계';
+  rvRev=new Set(); rvVerses=getVersesRange(it.ch,it.a,it.b);
+  renderReviewStage();
+}
+function renderReviewStage(){
+  document.getElementById('revStage').innerHTML='<div class="script">'+rvVerses.map((v,vi)=>{
+    const words=v.words.map((w,wi)=>{
+      const k=vi+'-'+wi;
+      if(rvRev.has(k)||!hideable(w))return '<span class="w rev">'+esc(w)+'</span>';
+      const a=[...w],lead=a[0]||'',rest=a.slice(1).join('');
+      return '<span class="w ghost" role="button" tabindex="0" data-rvk="'+k+'"><span class="lead">'+esc(lead)+'</span><span class="rest">'+esc(rest)+'</span></span>';
+    }).join(' ');
+    return '<p class="verse"><button class="listen" data-say="'+vi+'" aria-label="듣기">▶</button><span class="vnum">'+v.n+'</span>'+words+'</p>';
+  }).join('')+'</div>';
+  updateSpeakUI();
+}
+function gradeReview(pass){
+  const it=revQueue[revIdx];
+  if(pass){
+    it.lv=(it.lv||0)+1;
+    if(it.lv>=R_INT.length){ state.reviews=state.reviews.filter(r=>r!==it); addXP(25); } // 졸업
+    else { it.due=isoPlus(R_INT[it.lv]); addXP(10); }
+  }else{ it.lv=0; it.due=isoPlus(1); addXP(4); }
+  save();
+  revIdx++;
+  if(revIdx>=revQueue.length){
+    const d=tStr(); if(!state.completedDates.includes(d))state.completedDates.push(d); save();
+    celebrate(); renderHome(); show('home');
+  }else openReviewItem();
+}
+
 /* ===== 이벤트 ===== */
+document.getElementById('reviewBtn').addEventListener('click',startReview);
+document.getElementById('revBack').addEventListener('click',()=>{renderHome();show('home');});
+document.getElementById('revFail').addEventListener('click',()=>gradeReview(false));
+document.getElementById('revPass').addEventListener('click',()=>gradeReview(true));
+document.getElementById('revStage').addEventListener('click',e=>{
+  const say=e.target.closest('[data-say]'); if(say){speak(rvVerses[+say.dataset.say].words.join(' '), 'rvsay-'+say.dataset.say);return;}
+  const rk=e.target.closest('[data-rvk]'); if(rk){rvRev.add(rk.dataset.rvk);renderReviewStage();}
+});
+document.getElementById('revStage').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const rk=e.target.closest('[data-rvk]');if(rk){e.preventDefault();rvRev.add(rk.dataset.rvk);renderReviewStage();}}});
 document.getElementById('paceSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;state.pace=+b.dataset.p;save();renderHome();});
 document.getElementById('startBtn').addEventListener('click',startToday);
 document.getElementById('selectBtn').addEventListener('click',()=>{renderSelect();show('select');});
@@ -581,7 +666,7 @@ document.getElementById('selList').addEventListener('click',e=>{const li=e.targe
 document.getElementById('chBack').addEventListener('click',()=>{renderSelect();show('select');});
 document.getElementById('chContinue').addEventListener('click',()=>{startRange(viewCh, nextVerse(viewCh)||1);});
 document.getElementById('vGrid').addEventListener('click',e=>{const cell=e.target.closest('[data-v]');if(cell)startRange(viewCh, +cell.dataset.v);});
-document.getElementById('resetBtn').addEventListener('click',()=>{if(confirm('내 진도와 도장을 모두 지울까요? 본문은 그대로 남아요.')){state={pace:state.pace,ch:{},xp:0,completedDates:[]};save();renderHome();}});
+document.getElementById('resetBtn').addEventListener('click',()=>{if(confirm('내 진도와 도장을 모두 지울까요? 본문은 그대로 남아요.')){state={pace:state.pace,ch:{},xp:0,completedDates:[],reviews:[]};save();renderHome();}});
 document.getElementById('sessBack').addEventListener('click',()=>{ viewCh=cur?cur.ch:viewCh; renderChapter(); show('chapter'); });
 document.getElementById('doneBtn').addEventListener('click',completeToday);
 
@@ -598,16 +683,13 @@ document.getElementById('stage').addEventListener('click',e=>{
   if(e.target.closest('#qReset')){qIdx=0;buildQuiz();renderQuiz(document.getElementById('stage'));return;}
   const rk=e.target.closest('[data-rk]'); if(rk){recRev.add(rk.dataset.rk);renderRecite(document.getElementById('stage'));return;}
   if(e.target.closest('#recAll')){dayVerses.forEach((v,vi)=>v.words.forEach((w,wi)=>recRev.add(vi+'-'+wi)));renderRecite(document.getElementById('stage'));markStepDone('recite');celebrate();return;}
-  if(e.target.closest('#recHide')){recRev=new Set();renderRecite(document.getElementById('stage'));return;}
+  const rl=e.target.closest('#recSeg button'); if(rl){recLevel=+rl.dataset.rl;recRev=new Set();computeBlanks();renderRecite(document.getElementById('stage'));return;}
+  if(e.target.closest('#recHide')){recRev=new Set();computeBlanks();renderRecite(document.getElementById('stage'));return;}
 });
 document.getElementById('stage').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const rk=e.target.closest('[data-rk]');if(rk){e.preventDefault();recRev.add(rk.dataset.rk);renderRecite(document.getElementById('stage'));}}});
 
 /* init */
 load(); initTTS(); renderHome();
-</script>
-<script>
-/* PWA: 서비스워커 등록 (https 호스팅에서 동작 — 설치/오프라인 지원) */
-if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>
 </body>
 </html>
