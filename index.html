@@ -516,7 +516,7 @@ function renderOrder(box){
   box.innerHTML='<div class="game-head"><span>구절 '+r.n+'절 · '+(oRound+1)+' / '+orderRounds.length+'</span><span class="pts">단어 '+oIdx+'/'+r.words.length+'</span></div>'+
     '<div class="answer-area" id="ansArea">'+placed+'</div>'+
     '<div class="pool" id="poolArea">'+pool+'</div>'+
-    '<div class="btn-row" style="margin-top:8px;"><button class="btn btn-ghost sm" id="oHint">힌트</button><button class="btn btn-ghost sm" id="oReset">이 구절 다시</button></div>';
+    '<div class="btn-row" style="margin-top:8px;"><button class="btn btn-ghost sm" id="oHint">힌트</button><button class="btn btn-ghost sm" id="oReset">이 구절 다시</button><button class="btn btn-ghost sm" data-go="quiz">다음 →</button></div>';
 }
 function orderTap(word, el){
   const r=orderRounds[oRound], need=r.words[oIdx];
@@ -552,7 +552,8 @@ function renderQuiz(box){
   const vt=v.words.map((w,wi)=>wi===q.wi?'<span class="qblank" id="qb">____</span>':'<span>'+esc(w)+'</span>').join(' ');
   box.innerHTML='<div class="game-head"><span>'+(qIdx+1)+' / '+quizQs.length+' 문제</span><span class="pts">'+v.n+'절</span></div>'+
     '<div class="quiz-verse"><span class="vnum">'+v.n+'</span>'+vt+'</div>'+
-    '<div class="opts" id="qopts">'+q.opts.map(o=>'<button class="opt" data-o="'+esc(o)+'">'+esc(o)+'</button>').join('')+'</div>';
+    '<div class="opts" id="qopts">'+q.opts.map(o=>'<button class="opt" data-o="'+esc(o)+'">'+esc(o)+'</button>').join('')+'</div>'+
+    '<div class="btn-row" style="margin-top:8px;"><button class="btn btn-ghost sm" data-go="recite">다음 · 암송 도전 →</button></div>';
 }
 function quizTap(opt, el){
   if(qLocked)return; const q=quizQs[qIdx];
